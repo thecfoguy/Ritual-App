@@ -1,123 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0d0d0d">
-<title>Ritual</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ritual</title>
 
-<style>
-* {
-  box-sizing: border-box;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  margin: 0;
-  background: #0d0d0d;
-  color: white;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
-}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0d0d0d;
+      color: white;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-#app {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
 
-header {
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 22px;
-  border-bottom: 1px solid #292929;
-}
+    header {
+      padding: 18px 20px;
+      font-size: 26px;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
+    }
 
-.logo {
-  font-size: 27px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
+    .card {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 35px;
+      text-align: center;
+      font-size: 30px;
+      line-height: 1.4;
+      user-select: none;
+    }
 
-.add {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  border: 1px solid #555;
-  background: #181818;
-  color: white;
-  font-size: 30px;
-  line-height: 40px;
-}
+    .hint {
+      text-align: center;
+      font-size: 13px;
+      color: #888;
+      padding-bottom: 18px;
+    }
 
-main {
-  flex: 1;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 25px;
-  touch-action: pan-y;
-}
+    .add-button {
+      position: absolute;
+      right: 22px;
+      bottom: 26px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 300;
+      cursor: pointer;
+    }
 
-.card {
-  width: 100%;
-  max-width: 600px;
-  min-height: 58vh;
-  background: #171717;
-  border: 1px solid #333;
-  border-radius: 24px;
-  padding: 38px 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-family: Georgia, serif;
-  font-size: clamp(28px, 7vw, 46px);
-  line-height: 1.35;
-  box-shadow: 0 15px 45px rgba(0,0,0,.35);
-  user-select: none;
-}
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
 
-.hint {
-  position: absolute;
-  bottom: 12px;
-  color: #777;
-  font-size: 13px;
-}
+    .modal-content {
+      background: #1a1a1a;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 18px;
+      padding: 22px;
+    }
 
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.88);
-  z-index: 10;
-  align-items: center;
-  justify-content: center;
-  padding: 22px;
-}
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      resize: none;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 18px;
+      font-family: Arial, sans-serif;
+    }
 
-.modal-box {
-  width: 100%;
-  max-width: 520px;
-  background: #181818;
-  border: 1px solid #444;
-  border-radius: 22px;
-  padding: 25px;
-}
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
 
-.modal-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 18px;
-}
+    .modal-buttons button {
+      flex: 1;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
 
-textarea {
-  width: 100%;
-  height: 180px;
-  resize: none;
-  background: #0d0d0d;
-  color: white;
-  border: 1px solid #555;
-  border-radius: 
+<body>
+
+<div class="app">
+  <header>Ritual</header>
+
+  <div class="card" id="card">
+    Discipline is choosing between what you want now and what you want most.
+  </div>
+
+  <div class="hint">
+    Swipe left or right
+  </div>
+
+  <button class="add-button" onclick="openAdd()">+</button>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <textarea
+      id="quoteInput"
+      placeholder="Add a thought or quote..."
+    ></textarea>
+
+    <div class="modal-buttons">
+      <button onclick="closeAdd()">Cancel</button>
+      <button onclick="addQuote()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let quotes = JSON.parse(localStorage.getItem("ritualQuotes")) || [
+    "Discipline is choosing between what you want now and what you want most.",
+    "What we think, we become.",
+    "The obstacle is the way."
+  ];
+
+  let current = 0;
+
+  const card = document.getElementById("card");
+  const modal = document.getElementById("modal");
+  const input = document.getElementById("quoteInput");
+
+  function showQuote() {
+    card.textContent = quotes[current];
+  }
+
+  function nextQuote() {
+    current++;
+    if (current >= quotes.length) current = 0;
+    showQuote();
+  }
+
+  function previousQuote() {
+    current--;
+    if (current < 0) current = quotes.length - 1;
+    showQuote();
+  }
+
+  function openAdd() {
+    modal.style.display = "flex";
+    setTimeout(() => input.focus(), 100);
+  }
+
+  function closeAdd() {
+    modal.style.display = "none";
+    input.value = "";
+  }
+
+  function addQuote() {
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    quotes.push(text);
+    localStorage.setItem("ritualQuotes", JSON.stringify(quotes));
+
+    current = quotes.length - 1;
+    showQuote();
+
+    input.value = "";
+    modal.style.display = "none";
+  }
+
+  let startX = 0;
+  let startY = 0;
+
+  document.addEventListener("touchstart", function(e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  });
+
+  document.addEventListener("touchend", function(e) {
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+
+    const diffX = startX - endX;
+    const diffY = startY - endY;
+
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+      if (diffX > 0) {
+        nextQuote();
+      } else {
+        previousQuote();
+      }
+    }
+  });
+
+  showQuote();
+</script>
+
+</body>
+</html>
