@@ -263,7 +263,7 @@
     function render() {
       track.innerHTML = quotes.map(q => `
         <section class="card">
-          <div class="quote">“${esc(q.text)}”</div>
+          <div class="quote">${esc(q.text)}</div>
           ${q.author ? `<div class="author">— ${esc(q.author)}</div>` : ""}
         </section>
       `).join("");
