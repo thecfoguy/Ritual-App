@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#0b0b0b" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Ritual</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0b0b0b;
+      font-family: Arial, Helvetica, sans-serif;
+      color: white;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+    }
+
+    #app {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      background:
+        radial-gradient(circle at 50% 30%, #1b1b1b 0%, #0b0b0b 55%, #050505 100%);
+    }
+
+    header {
+      height: 64px;
+      flex: 0 0 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: env(safe-area-inset-top);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      user-select: none;
+    }
+
+    #viewport {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+      touch-action: pan-y;
+    }
+
+    #track {
+      height: 100%;
+      display: flex;
+      transition: transform 280ms cubic-bezier(.2,.8,.2,1);
+      will-change: transform;
+    }
+
+    .card {
+      position: relative;
+      min-width: 100vw;
+      height: 100%;
+      padding: 26px 28px 130px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      user-select: none;
+    }
+
+    .quote {
+      max-width: 820px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(29px, 7vw, 54px);
+      line-height: 1.18;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+
+    .author {
+      margin-top: 28px;
+      font-size: clamp(16px, 4vw, 22px);
+      opacity: .72;
+      letter-spacing: .04em;
+    }
+
+    #counter {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: calc(26px + env(safe-area-inset-bottom));
+      text-align: center;
+      font-size: 13px;
+      opacity: .45;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    #addBtn {
+      position: fixed;
+      right: 22px;
+      bottom: calc(34px + env(safe-area-inset-bottom));
+      width: 66px;
+      height: 66px;
+      border: 2px solid rgba(255,255,255,.24);
+      border-radius: 50%;
+      background: linear-gradient(145deg, #32d46b, #149447);
+      color: white;
+      font-size: 42px;
+      font-weight: 400;
+      line-height: 58px;
+      box-shadow:
+        0 10px 28px rgba(0,0,0,.52),
+        0 3px 9px rgba(32,198,90,.32),
+        inset 0 1px 0 rgba(255,255,255,.20);
+      z-index: 20;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0 4px 0;
+    }
+
+    #addBtn:active {
+      transform: scale(.94);
+      box-shadow:
+        0 5px 16px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.16);
+    }
+
+    #modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(0,0,0,.72);
+      padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+    }
+    #modal.open { display: flex; }
+
+    .sheet {
+      width: min(680px, 100%);
+      background: #181818;
+      border: 1px solid #303030;
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 15px 60px rgba(0,0,0,.6);
+    }
+
+    .sheet h2 {
+      margin: 2px 0 14px;
+      font-size: 22px;
+    }
+
+    textarea, input {
+      width: 100%;
+      border: 1px solid #3a3a3a;
+      border-radius: 13px;
+      background: #0d0d0d;
+      color: white;
+      padding: 14px;
+      font: inherit;
+      outline: none;
+    }
+    textarea { min-height: 145px; resize: vertical; font-size: 18px; }
+    input { margin-top: 10px; font-size: 16px; }
+    textarea:focus, input:focus { border-color: #20c65a; }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .actions button {
+      flex: 1;
+      min-height: 50px;
+      border-radius: 13px;
+      border: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    #cancelBtn { background: #303030; color: white; }
+    #saveBtn { background: #20c65a; color: white; }
+
+    .hint {
+      position: fixed;
+      left: 18px;
+      bottom: calc(44px + env(safe-area-inset-bottom));
+      font-size: 12px;
+      opacity: .35;
+      user-select: none;
+      pointer-events: none;
+    }
+
+
+    .quoteTools {
+      position: absolute;
+      bottom: calc(92px + env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      z-index: 10;
+    }
+    .quoteTools button {
+      min-width: 82px;
+      min-height: 42px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      background: #292929;
+    }
+    .quoteTools .deleteQuoteBtn { background: #7d2020; }
+
+    @media (max-height: 600px) {
+      .card { padding-bottom: 90px; }
+      #addBtn { width: 56px; height: 56px; font-size: 38px; }
+      .hint { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header>RITUAL</header>
+
+    <main id="viewport">
+      <div id="track"></div>
+    </main>
+
+    <div class="hint">Swipe ← →</div>
+    <div id="counter"></div>
+    <button id="addBtn" aria-label="Add quote">+</button>
+
+    <div id="modal" aria-hidden="true">
+      <div class="sheet">
+        <h2>Add a quote</h2>
+        <textarea id="quoteInput" placeholder="Type or paste your quote here…"></textarea>
+        <input id="authorInput" placeholder="Author (optional)" />
+        <div class="actions">
+          <button id="cancelBtn">Cancel</button>
+          <button id="saveBtn">Save Quote</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const starterQuotes = [
+      { text: "The impediment to action advances action. What stands in the way becomes the way.", author: "Marcus Aurelius" },
+      { text: "Waste no more time arguing what a good man should be. Be one.", author: "Marcus Aurelius" },
+      { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" }
+    ];
+
+    let quotes;
+    try {
+      quotes = JSON.parse(localStorage.getItem("ritual_quotes")) || starterQuotes;
+      if (!Array.isArray(quotes) || quotes.length === 0) quotes = starterQuotes;
+    } catch {
+      quotes = starterQuotes;
+    }
+
+    let index = 0;
+    let editingIndex = null;
+    const track = document.getElementById("track");
+    const viewport = document.getElementById("viewport");
+    const counter = document.getElementById("counter");
+    const modal = document.getElementById("modal");
+    const quoteInput = document.getElementById("quoteInput");
+    const authorInput = document.getElementById("authorInput");
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, m => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+      }[m]));
+    }
+
+    function render() {
+      track.innerHTML = quotes.map((q, i) => `
+        <section class="card">
+          <div class="quote">${esc(q.text)}</div>
+          ${q.author ? `<div class="author">— ${esc(q.author)}</div>` : ""}
+          <div class="quoteTools">
+            <button class="editQuoteBtn" data-index="${i}">Edit</button>
+            <button class="deleteQuoteBtn" data-index="${i}">Delete</button>
+          </div>
+        </section>
+      `).join("");
+      index = Math.max(0, Math.min(index, quotes.length - 1));
+      go(index, false);
+    }
+
+    function go(i, animate = true) {
+      index = Math.max(0, Math.min(i, quotes.length - 1));
+      track.style.transition = animate ? "transform 280ms cubic-bezier(.2,.8,.2,1)" : "none";
+      track.style.transform = `translateX(${-index * window.innerWidth}px)`;
+      counter.textContent = `${index + 1} / ${quotes.length}`;
+    }
+
+    let startX = 0, startY = 0, dragging = false;
+
+    viewport.addEventListener("touchstart", e => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      dragging = true;
+      track.style.transition = "none";
+    }, {passive:true});
+
+    viewport.addEventListener("touchmove", e => {
+      if (!dragging || e.touches.length !== 1) return;
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        e.preventDefault();
+        track.style.transform = `translateX(${(-index * window.innerWidth) + dx}px)`;
+      }
+    }, {passive:false});
+
+    viewport.addEventListener("touchend", e => {
+      if (!dragging) return;
+      dragging = false;
+      const endX = e.changedTouches[0].clientX;
+      const dx = endX - startX;
+      if (dx < -55 && index < quotes.length - 1) go(index + 1);
+      else if (dx > 55 && index > 0) go(index - 1);
+      else go(index);
+    }, {passive:true});
+
+    document.getElementById("addBtn").addEventListener("click", () => {
+      editingIndex = null;
+      document.querySelector(".sheet h2").textContent = "Add a quote";
+      document.getElementById("saveBtn").textContent = "Save Quote";
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden","false");
+      quoteInput.value = "";
+      authorInput.value = "";
+      setTimeout(() => quoteInput.focus(), 100);
+    });
+
+    track.addEventListener("click", e => {
+      const editBtn = e.target.closest(".editQuoteBtn");
+      const deleteBtn = e.target.closest(".deleteQuoteBtn");
+
+      if (editBtn) {
+        const i = Number(editBtn.dataset.index);
+        editingIndex = i;
+        quoteInput.value = quotes[i].text;
+        authorInput.value = quotes[i].author || "";
+        document.querySelector(".sheet h2").textContent = "Edit quote";
+        document.getElementById("saveBtn").textContent = "Save Changes";
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden","false");
+        setTimeout(() => quoteInput.focus(), 100);
+        return;
+      }
+
+      if (deleteBtn) {
+        const i = Number(deleteBtn.dataset.index);
+        if (!confirm("Delete this quote?")) return;
+        quotes.splice(i, 1);
+        localStorage.setItem("ritual_quotes", JSON.stringify(quotes));
+        if (quotes.length === 0) {
+          quotes = starterQuotes.map(q => ({...q}));
+          localStorage.setItem("ritual_quotes", JSON.stringify(quotes));
+        }
+        index = Math.min(i, quotes.length - 1);
+        render();
+      }
+    });
+
+    document.getElementById("cancelBtn").addEventListener("click", closeModal);
+    modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+
+    function closeModal() {
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden","true");
+      quoteInput.blur();
+      authorInput.blur();
+    }
+
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      const text = quoteInput.value.trim();
+      const author = authorInput.value.trim();
+      if (!text) {
+        quoteInput.focus();
+        return;
+      }
+      if (editingIndex === null) {
+        quotes.push({text, author});
+        index = quotes.length - 1;
+      } else {
+        quotes[editingIndex] = {text, author};
+        index = editingIndex;
+      }
+      localStorage.setItem("ritual_quotes", JSON.stringify(quotes));
+      editingIndex = null;
+      render();
+      closeModal();
+    });
+
+    window.addEventListener("resize", () => go(index, false));
+    render();
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
+    }
+  </script>
+</body>
+</html>
