@@ -23,7 +23,6 @@
       -webkit-tap-highlight-color: transparent;
       overscroll-behavior: none;
     }
-
     #app {
       position: fixed;
       inset: 0;
@@ -44,7 +43,25 @@
       font-weight: 800;
       letter-spacing: 0.18em;
       user-select: none;
+      position: relative;
     }
+    #backupTools {
+      position: absolute;
+      right: 10px;
+      display: flex;
+      gap: 6px;
+    }
+    #backupTools button {
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 9px;
+      background: #292929;
+      color: white;
+      padding: 7px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+    #restoreInput { display: none; }
 
     #viewport {
       flex: 1;
@@ -60,7 +77,6 @@
       transition: transform 280ms cubic-bezier(.2,.8,.2,1);
       will-change: transform;
     }
-
     .card {
       position: relative;
       min-width: 100vw;
@@ -82,7 +98,6 @@
       font-weight: 600;
       overflow-wrap: anywhere;
     }
-
     .author {
       margin-top: 28px;
       font-size: clamp(16px, 4vw, 22px);
@@ -101,7 +116,6 @@
       pointer-events: none;
       user-select: none;
     }
-
     #addBtn {
       position: fixed;
       right: 22px;
@@ -126,7 +140,6 @@
       justify-content: center;
       padding: 0 0 4px 0;
     }
-
     #addBtn:active {
       transform: scale(.94);
       box-shadow:
@@ -145,7 +158,6 @@
       padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
     }
     #modal.open { display: flex; }
-
     .sheet {
       width: min(680px, 100%);
       background: #181818;
@@ -159,7 +171,6 @@
       margin: 2px 0 14px;
       font-size: 22px;
     }
-
     textarea, input {
       width: 100%;
       border: 1px solid #3a3a3a;
@@ -173,7 +184,6 @@
     textarea { min-height: 145px; resize: vertical; font-size: 18px; }
     input { margin-top: 10px; font-size: 16px; }
     textarea:focus, input:focus { border-color: #20c65a; }
-
     .actions {
       display: flex;
       gap: 10px;
@@ -189,7 +199,6 @@
     }
     #cancelBtn { background: #303030; color: white; }
     #saveBtn { background: #20c65a; color: white; }
-
     .hint {
       position: fixed;
       left: 18px;
@@ -199,7 +208,6 @@
       user-select: none;
       pointer-events: none;
     }
-
 
     .quoteTools {
       position: absolute;
@@ -221,7 +229,6 @@
       background: #292929;
     }
     .quoteTools .deleteQuoteBtn { background: #7d2020; }
-
     @media (max-height: 600px) {
       .card { padding-bottom: 90px; }
       #addBtn { width: 56px; height: 56px; font-size: 38px; }
@@ -231,7 +238,14 @@
 </head>
 <body>
   <div id="app">
-    <header>RITUAL</header>
+    <header>
+      RITUAL
+      <div id="backupTools">
+        <button id="backupBtn" type="button">Backup</button>
+        <button id="restoreBtn" type="button">Restore</button>
+        <input id="restoreInput" type="file" accept=".json,application/json" />
+      </div>
+    </header>
 
     <main id="viewport">
       <div id="track"></div>
@@ -240,7 +254,6 @@
     <div class="hint">Swipe ← →</div>
     <div id="counter"></div>
     <button id="addBtn" aria-label="Add quote">+</button>
-
     <div id="modal" aria-hidden="true">
       <div class="sheet">
         <h2>Add a quote</h2>
@@ -253,14 +266,12 @@
       </div>
     </div>
   </div>
-
   <script>
     const starterQuotes = [
       { text: "The impediment to action advances action. What stands in the way becomes the way.", author: "Marcus Aurelius" },
       { text: "Waste no more time arguing what a good man should be. Be one.", author: "Marcus Aurelius" },
       { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" }
     ];
-
     let quotes;
     try {
       quotes = JSON.parse(localStorage.getItem("ritual_quotes")) || starterQuotes;
@@ -268,7 +279,6 @@
     } catch {
       quotes = starterQuotes;
     }
-
     let index = 0;
     let editingIndex = null;
     const track = document.getElementById("track");
@@ -277,13 +287,13 @@
     const modal = document.getElementById("modal");
     const quoteInput = document.getElementById("quoteInput");
     const authorInput = document.getElementById("authorInput");
+    const restoreInput = document.getElementById("restoreInput");
 
     function esc(s) {
       return String(s).replace(/[&<>"']/g, m => ({
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
       }[m]));
     }
-
     function render() {
       track.innerHTML = quotes.map((q, i) => `
         <section class="card">
@@ -298,7 +308,6 @@
       index = Math.max(0, Math.min(index, quotes.length - 1));
       go(index, false);
     }
-
     function go(i, animate = true) {
       index = Math.max(0, Math.min(i, quotes.length - 1));
       track.style.transition = animate ? "transform 280ms cubic-bezier(.2,.8,.2,1)" : "none";
@@ -307,7 +316,6 @@
     }
 
     let startX = 0, startY = 0, dragging = false;
-
     viewport.addEventListener("touchstart", e => {
       if (e.touches.length !== 1) return;
       startX = e.touches[0].clientX;
@@ -315,7 +323,6 @@
       dragging = true;
       track.style.transition = "none";
     }, {passive:true});
-
     viewport.addEventListener("touchmove", e => {
       if (!dragging || e.touches.length !== 1) return;
       const dx = e.touches[0].clientX - startX;
@@ -325,7 +332,6 @@
         track.style.transform = `translateX(${(-index * window.innerWidth) + dx}px)`;
       }
     }, {passive:false});
-
     viewport.addEventListener("touchend", e => {
       if (!dragging) return;
       dragging = false;
@@ -335,6 +341,68 @@
       else if (dx > 55 && index > 0) go(index - 1);
       else go(index);
     }, {passive:true});
+
+    document.getElementById("backupBtn").addEventListener("click", () => {
+      const backup = {
+        app: "Ritual",
+        version: 1,
+        createdAt: new Date().toISOString(),
+        quotes
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const date = new Date().toISOString().slice(0, 10);
+      link.href = url;
+      link.download = `ritual-backup-${date}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+
+    document.getElementById("restoreBtn").addEventListener("click", () => {
+      restoreInput.value = "";
+      restoreInput.click();
+    });
+
+    restoreInput.addEventListener("change", async () => {
+      const file = restoreInput.files && restoreInput.files[0];
+      if (!file) return;
+
+      try {
+        const data = JSON.parse(await file.text());
+        const restoredQuotes = Array.isArray(data) ? data : data.quotes;
+        const valid = Array.isArray(restoredQuotes) &&
+          restoredQuotes.length > 0 &&
+          restoredQuotes.every(q =>
+            q &&
+            typeof q.text === "string" &&
+            typeof (q.author ?? "") === "string"
+          );
+
+        if (!valid) {
+          alert("That is not a valid Ritual backup file.");
+          return;
+        }
+
+        if (!confirm(`Restore ${restoredQuotes.length} quotes? This will replace the quotes currently on this phone.`)) {
+          return;
+        }
+
+        quotes = restoredQuotes.map(q => ({
+          text: q.text,
+          author: q.author || ""
+        }));
+        localStorage.setItem("ritual_quotes", JSON.stringify(quotes));
+        index = 0;
+        editingIndex = null;
+        render();
+        alert("Ritual backup restored.");
+      } catch {
+        alert("Ritual could not read that backup file.");
+      }
+    });
 
     document.getElementById("addBtn").addEventListener("click", () => {
       editingIndex = null;
@@ -346,11 +414,9 @@
       authorInput.value = "";
       setTimeout(() => quoteInput.focus(), 100);
     });
-
     track.addEventListener("click", e => {
       const editBtn = e.target.closest(".editQuoteBtn");
       const deleteBtn = e.target.closest(".deleteQuoteBtn");
-
       if (editBtn) {
         const i = Number(editBtn.dataset.index);
         editingIndex = i;
@@ -363,7 +429,6 @@
         setTimeout(() => quoteInput.focus(), 100);
         return;
       }
-
       if (deleteBtn) {
         const i = Number(deleteBtn.dataset.index);
         if (!confirm("Delete this quote?")) return;
@@ -377,7 +442,6 @@
         render();
       }
     });
-
     document.getElementById("cancelBtn").addEventListener("click", closeModal);
     modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
 
@@ -387,7 +451,6 @@
       quoteInput.blur();
       authorInput.blur();
     }
-
     document.getElementById("saveBtn").addEventListener("click", () => {
       const text = quoteInput.value.trim();
       const author = authorInput.value.trim();
@@ -407,7 +470,6 @@
       render();
       closeModal();
     });
-
     window.addEventListener("resize", () => go(index, false));
     render();
 
