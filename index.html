@@ -9,18 +9,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Ritual</title>
   <link rel="manifest" href="manifest.json" />
-
   <style>
-    :root {
-      color-scheme: dark;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body {
       margin: 0;
       width: 100%;
       height: 100%;
@@ -31,19 +23,13 @@
       -webkit-tap-highlight-color: transparent;
       overscroll-behavior: none;
     }
-
     #app {
       position: fixed;
       inset: 0;
       display: flex;
       flex-direction: column;
       background:
-        radial-gradient(
-          circle at 50% 30%,
-          #1b1b1b 0%,
-          #0b0b0b 55%,
-          #050505 100%
-        );
+        radial-gradient(circle at 50% 30%, #1b1b1b 0%, #0b0b0b 55%, #050505 100%);
     }
 
     header {
@@ -59,14 +45,12 @@
       user-select: none;
       position: relative;
     }
-
     #backupTools {
       position: absolute;
       right: 10px;
       display: flex;
       gap: 6px;
     }
-
     #backupTools button {
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 9px;
@@ -77,10 +61,7 @@
       font-weight: 700;
       letter-spacing: 0;
     }
-
-    #restoreInput {
-      display: none;
-    }
+    #restoreInput { display: none; }
 
     #viewport {
       flex: 1;
@@ -101,20 +82,16 @@
 
     .card {
       position: relative;
-
-      width: 100vw;
-      min-width: 100vw;
-      max-width: 100vw;
-      flex: 0 0 100vw;
-
+      flex: 0 0 var(--card-width, 100vw);
+      width: var(--card-width, 100vw);
+      min-width: var(--card-width, 100vw);
+      max-width: var(--card-width, 100vw);
       height: 100%;
       padding: 26px 28px 130px;
-
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-
       text-align: center;
       user-select: none;
       overflow: hidden;
@@ -123,16 +100,11 @@
     .quote {
       width: 100%;
       max-width: 820px;
-
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0;
-
+      margin: 0 auto;
       font-family: Georgia, "Times New Roman", serif;
       font-size: clamp(29px, 7vw, 54px);
       line-height: 1.18;
       font-weight: 600;
-
       text-align: center;
       overflow-wrap: anywhere;
     }
@@ -140,10 +112,7 @@
     .author {
       width: 100%;
       max-width: 820px;
-      margin-top: 28px;
-      margin-left: auto;
-      margin-right: auto;
-
+      margin: 28px auto 0;
       font-size: clamp(16px, 4vw, 22px);
       opacity: .72;
       letter-spacing: .04em;
@@ -155,55 +124,38 @@
       left: 0;
       right: 0;
       bottom: calc(26px + env(safe-area-inset-bottom));
-
       text-align: center;
       font-size: 13px;
       opacity: .45;
-
       pointer-events: none;
       user-select: none;
     }
-
     #addBtn {
       position: fixed;
       right: 22px;
       bottom: calc(34px + env(safe-area-inset-bottom));
-
       width: 66px;
       height: 66px;
-
       border: 2px solid rgba(255,255,255,.24);
       border-radius: 50%;
-
-      background: linear-gradient(
-        145deg,
-        #32d46b,
-        #149447
-      );
-
+      background: linear-gradient(145deg, #32d46b, #149447);
       color: white;
       font-size: 42px;
       font-weight: 400;
       line-height: 58px;
-
       box-shadow:
         0 10px 28px rgba(0,0,0,.52),
         0 3px 9px rgba(32,198,90,.32),
         inset 0 1px 0 rgba(255,255,255,.20);
-
       z-index: 20;
       cursor: pointer;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       padding: 0 0 4px 0;
     }
-
     #addBtn:active {
       transform: scale(.94);
-
       box-shadow:
         0 5px 16px rgba(0,0,0,.45),
         inset 0 1px 0 rgba(255,255,255,.16);
@@ -212,187 +164,101 @@
     #modal {
       position: fixed;
       inset: 0;
-
       z-index: 50;
-
       display: none;
       align-items: flex-end;
       justify-content: center;
-
       background: rgba(0,0,0,.72);
-
-      padding:
-        16px
-        16px
-        calc(16px + env(safe-area-inset-bottom));
+      padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
     }
-
-    #modal.open {
-      display: flex;
-    }
-
+    #modal.open { display: flex; }
     .sheet {
       width: min(680px, 100%);
-
       background: #181818;
-
       border: 1px solid #303030;
       border-radius: 22px;
-
       padding: 18px;
-
-      box-shadow:
-        0 15px 60px rgba(0,0,0,.6);
+      box-shadow: 0 15px 60px rgba(0,0,0,.6);
     }
 
     .sheet h2 {
       margin: 2px 0 14px;
       font-size: 22px;
     }
-
-    textarea,
-    input {
+    textarea, input {
       width: 100%;
-
       border: 1px solid #3a3a3a;
       border-radius: 13px;
-
       background: #0d0d0d;
       color: white;
-
       padding: 14px;
-
       font: inherit;
       outline: none;
     }
-
-    textarea {
-      min-height: 145px;
-      resize: vertical;
-      font-size: 18px;
-    }
-
-    input {
-      margin-top: 10px;
-      font-size: 16px;
-    }
-
-    textarea:focus,
-    input:focus {
-      border-color: #20c65a;
-    }
-
+    textarea { min-height: 145px; resize: vertical; font-size: 18px; }
+    input { margin-top: 10px; font-size: 16px; }
+    textarea:focus, input:focus { border-color: #20c65a; }
     .actions {
       display: flex;
       gap: 10px;
       margin-top: 14px;
     }
-
     .actions button {
       flex: 1;
       min-height: 50px;
-
       border-radius: 13px;
       border: 0;
-
       font-size: 17px;
       font-weight: 700;
     }
-
-    #cancelBtn {
-      background: #303030;
-      color: white;
-    }
-
-    #saveBtn {
-      background: #20c65a;
-      color: white;
-    }
-
+    #cancelBtn { background: #303030; color: white; }
+    #saveBtn { background: #20c65a; color: white; }
     .hint {
       position: fixed;
       left: 18px;
       bottom: calc(44px + env(safe-area-inset-bottom));
-
       font-size: 12px;
       opacity: .35;
-
       user-select: none;
       pointer-events: none;
     }
 
     .quoteTools {
       position: absolute;
-
       bottom: calc(92px + env(safe-area-inset-bottom));
       left: 50%;
-
       transform: translateX(-50%);
-
       display: flex;
       gap: 12px;
-
       z-index: 10;
     }
-
     .quoteTools button {
       min-width: 82px;
       min-height: 42px;
-
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 12px;
-
       color: white;
-
       font-size: 14px;
       font-weight: 700;
-
       background: #292929;
     }
-
-    .quoteTools .deleteQuoteBtn {
-      background: #7d2020;
-    }
+    .quoteTools .deleteQuoteBtn { background: #7d2020; }
 
     @media (max-height: 600px) {
-      .card {
-        padding-bottom: 90px;
-      }
-
-      #addBtn {
-        width: 56px;
-        height: 56px;
-        font-size: 38px;
-      }
-
-      .hint {
-        display: none;
-      }
+      .card { padding-bottom: 90px; }
+      #addBtn { width: 56px; height: 56px; font-size: 38px; }
+      .hint { display:none; }
     }
   </style>
 </head>
-
 <body>
-
   <div id="app">
-
     <header>
       RITUAL
-
       <div id="backupTools">
-        <button id="backupBtn" type="button">
-          Backup
-        </button>
-
-        <button id="restoreBtn" type="button">
-          Restore
-        </button>
-
-        <input
-          id="restoreInput"
-          type="file"
-          accept=".json,application/json"
-        />
+        <button id="backupBtn" type="button">Backup</button>
+        <button id="restoreBtn" type="button">Restore</button>
+        <input id="restoreInput" type="file" accept=".json,application/json" />
       </div>
     </header>
 
@@ -400,851 +266,367 @@
       <div id="track"></div>
     </main>
 
-    <div class="hint">
-      Swipe ← →
-    </div>
-
+    <div class="hint">Swipe ← →</div>
     <div id="counter"></div>
+    <button id="addBtn" aria-label="Add quote">+</button>
 
-    <button
-      id="addBtn"
-      aria-label="Add quote"
-    >
-      +
-    </button>
-
-    <div
-      id="modal"
-      aria-hidden="true"
-    >
-
+    <div id="modal" aria-hidden="true">
       <div class="sheet">
-
-        <h2>
-          Add a quote
-        </h2>
-
-        <textarea
-          id="quoteInput"
-          placeholder="Type or paste your quote here…"
-        ></textarea>
-
-        <input
-          id="authorInput"
-          placeholder="Author (optional)"
-        />
-
+        <h2>Add a quote</h2>
+        <textarea id="quoteInput" placeholder="Type or paste your quote here…"></textarea>
+        <input id="authorInput" placeholder="Author (optional)" />
         <div class="actions">
-
-          <button id="cancelBtn">
-            Cancel
-          </button>
-
-          <button id="saveBtn">
-            Save Quote
-          </button>
-
+          <button id="cancelBtn">Cancel</button>
+          <button id="saveBtn">Save Quote</button>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-
     const starterQuotes = [
-      {
-        text: "The impediment to action advances action. What stands in the way becomes the way.",
-        author: "Marcus Aurelius"
-      },
-      {
-        text: "Waste no more time arguing what a good man should be. Be one.",
-        author: "Marcus Aurelius"
-      },
-      {
-        text: "He who has a why to live can bear almost any how.",
-        author: "Friedrich Nietzsche"
-      }
+      { text: "The impediment to action advances action. What stands in the way becomes the way.", author: "Marcus Aurelius" },
+      { text: "Waste no more time arguing what a good man should be. Be one.", author: "Marcus Aurelius" },
+      { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" }
     ];
 
     let quotes;
 
     try {
-
-      quotes =
-        JSON.parse(
-          localStorage.getItem("ritual_quotes")
-        ) || starterQuotes;
-
-      if (
-        !Array.isArray(quotes) ||
-        quotes.length === 0
-      ) {
-        quotes = starterQuotes;
-      }
-
+      quotes = JSON.parse(localStorage.getItem("ritual_quotes")) || starterQuotes;
+      if (!Array.isArray(quotes) || quotes.length === 0) quotes = starterQuotes;
     } catch {
-
       quotes = starterQuotes;
-
     }
 
     let index = 0;
     let editingIndex = null;
 
-    const track =
-      document.getElementById("track");
+    const track = document.getElementById("track");
+    const viewport = document.getElementById("viewport");
+    const counter = document.getElementById("counter");
+    const modal = document.getElementById("modal");
+    const quoteInput = document.getElementById("quoteInput");
+    const authorInput = document.getElementById("authorInput");
+    const restoreInput = document.getElementById("restoreInput");
 
-    const viewport =
-      document.getElementById("viewport");
+    function getViewportWidth() {
+      return viewport.getBoundingClientRect().width;
+    }
 
-    const counter =
-      document.getElementById("counter");
-
-    const modal =
-      document.getElementById("modal");
-
-    const quoteInput =
-      document.getElementById("quoteInput");
-
-    const authorInput =
-      document.getElementById("authorInput");
-
-    const restoreInput =
-      document.getElementById("restoreInput");
-
+    function syncCardWidth() {
+      const width = getViewportWidth();
+      document.documentElement.style.setProperty("--card-width", `${width}px`);
+      return width;
+    }
 
     function esc(s) {
-
-      return String(s).replace(
-        /[&<>"']/g,
-        m => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;'
-        }[m])
-      );
-
+      return String(s).replace(/[&<>"']/g, m => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#039;'
+      }[m]));
     }
-
 
     function render() {
+      track.innerHTML = quotes.map((q, i) => `
+        <section class="card">
+          <div class="quote">${esc(q.text)}</div>
+          ${q.author ? `<div class="author">— ${esc(q.author)}</div>` : ""}
+          <div class="quoteTools">
+            <button class="editQuoteBtn" data-index="${i}">Edit</button>
+            <button class="deleteQuoteBtn" data-index="${i}">Delete</button>
+          </div>
+        </section>
+      `).join("");
 
-      track.innerHTML =
-        quotes.map((q, i) => `
+      index = Math.max(0, Math.min(index, quotes.length - 1));
 
-          <section class="card">
-
-            <div class="quote">
-              ${esc(q.text)}
-            </div>
-
-            ${
-              q.author
-                ? `
-                  <div class="author">
-                    — ${esc(q.author)}
-                  </div>
-                `
-                : ""
-            }
-
-            <div class="quoteTools">
-
-              <button
-                class="editQuoteBtn"
-                data-index="${i}"
-              >
-                Edit
-              </button>
-
-              <button
-                class="deleteQuoteBtn"
-                data-index="${i}"
-              >
-                Delete
-              </button>
-
-            </div>
-
-          </section>
-
-        `).join("");
-
-
-      index =
-        Math.max(
-          0,
-          Math.min(
-            index,
-            quotes.length - 1
-          )
-        );
-
-
+      syncCardWidth();
       go(index, false);
-
     }
-
 
     function go(i, animate = true) {
+      index = Math.max(0, Math.min(i, quotes.length - 1));
 
-      index =
-        Math.max(
-          0,
-          Math.min(
-            i,
-            quotes.length - 1
-          )
-        );
+      const width = syncCardWidth();
 
+      track.style.transition = animate
+        ? "transform 280ms cubic-bezier(.2,.8,.2,1)"
+        : "none";
 
-      track.style.transition =
-        animate
-          ? "transform 280ms cubic-bezier(.2,.8,.2,1)"
-          : "none";
+      track.style.transform = `translate3d(${-index * width}px, 0, 0)`;
 
-
-      track.style.transform =
-        `translateX(${-index * window.innerWidth}px)`;
-
-
-      counter.textContent =
-        `${index + 1} / ${quotes.length}`;
-
+      counter.textContent = `${index + 1} / ${quotes.length}`;
     }
-
 
     let startX = 0;
     let startY = 0;
     let dragging = false;
 
+    viewport.addEventListener("touchstart", e => {
+      if (e.touches.length !== 1) return;
 
-    viewport.addEventListener(
-      "touchstart",
-      e => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      dragging = true;
 
-        if (e.touches.length !== 1) {
-          return;
-        }
+      track.style.transition = "none";
+    }, { passive: true });
 
-        startX =
-          e.touches[0].clientX;
+    viewport.addEventListener("touchmove", e => {
+      if (!dragging || e.touches.length !== 1) return;
 
-        startY =
-          e.touches[0].clientY;
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
 
-        dragging = true;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        e.preventDefault();
 
-        track.style.transition =
-          "none";
+        const width = getViewportWidth();
 
-      },
-      {
-        passive: true
+        track.style.transform =
+          `translate3d(${(-index * width) + dx}px, 0, 0)`;
       }
-    );
+    }, { passive: false });
 
+    viewport.addEventListener("touchend", e => {
+      if (!dragging) return;
 
-    viewport.addEventListener(
-      "touchmove",
-      e => {
+      dragging = false;
 
-        if (
-          !dragging ||
-          e.touches.length !== 1
-        ) {
-          return;
-        }
+      const endX = e.changedTouches[0].clientX;
+      const dx = endX - startX;
 
-
-        const dx =
-          e.touches[0].clientX -
-          startX;
-
-
-        const dy =
-          e.touches[0].clientY -
-          startY;
-
-
-        if (
-          Math.abs(dx) >
-          Math.abs(dy)
-        ) {
-
-          e.preventDefault();
-
-
-          track.style.transform =
-            `translateX(${
-              (-index * window.innerWidth) +
-              dx
-            }px)`;
-
-        }
-
-      },
-      {
-        passive: false
+      if (dx < -55 && index < quotes.length - 1) {
+        go(index + 1);
+      } else if (dx > 55 && index > 0) {
+        go(index - 1);
+      } else {
+        go(index);
       }
-    );
+    }, { passive: true });
 
+    document.getElementById("backupBtn").addEventListener("click", () => {
+      const backup = {
+        app: "Ritual",
+        version: 1,
+        createdAt: new Date().toISOString(),
+        quotes
+      };
 
-    viewport.addEventListener(
-      "touchend",
-      e => {
+      const blob = new Blob(
+        [JSON.stringify(backup, null, 2)],
+        { type: "application/json" }
+      );
 
-        if (!dragging) {
-          return;
-        }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const date = new Date().toISOString().slice(0, 10);
 
+      link.href = url;
+      link.download = `ritual-backup-${date}.json`;
 
-        dragging = false;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
 
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
 
-        const endX =
-          e.changedTouches[0].clientX;
+    document.getElementById("restoreBtn").addEventListener("click", () => {
+      restoreInput.value = "";
+      restoreInput.click();
+    });
 
+    restoreInput.addEventListener("change", async () => {
+      const file = restoreInput.files && restoreInput.files[0];
 
-        const dx =
-          endX - startX;
+      if (!file) return;
 
+      try {
+        const data = JSON.parse(await file.text());
+        const restoredQuotes = Array.isArray(data) ? data : data.quotes;
 
-        if (
-          dx < -55 &&
-          index < quotes.length - 1
-        ) {
-
-          go(index + 1);
-
-        } else if (
-          dx > 55 &&
-          index > 0
-        ) {
-
-          go(index - 1);
-
-        } else {
-
-          go(index);
-
-        }
-
-      },
-      {
-        passive: true
-      }
-    );
-
-
-    document
-      .getElementById("backupBtn")
-      .addEventListener(
-        "click",
-        () => {
-
-          const backup = {
-
-            app: "Ritual",
-
-            version: 1,
-
-            createdAt:
-              new Date().toISOString(),
-
-            quotes
-
-          };
-
-
-          const blob =
-            new Blob(
-              [
-                JSON.stringify(
-                  backup,
-                  null,
-                  2
-                )
-              ],
-              {
-                type: "application/json"
-              }
-            );
-
-
-          const url =
-            URL.createObjectURL(blob);
-
-
-          const link =
-            document.createElement("a");
-
-
-          const date =
-            new Date()
-              .toISOString()
-              .slice(0, 10);
-
-
-          link.href = url;
-
-
-          link.download =
-            `ritual-backup-${date}.json`;
-
-
-          document.body
-            .appendChild(link);
-
-
-          link.click();
-
-
-          link.remove();
-
-
-          setTimeout(
-            () => URL.revokeObjectURL(url),
-            1000
+        const valid =
+          Array.isArray(restoredQuotes) &&
+          restoredQuotes.length > 0 &&
+          restoredQuotes.every(q =>
+            q &&
+            typeof q.text === "string" &&
+            typeof (q.author ?? "") === "string"
           );
 
-        }
-      );
-
-
-    document
-      .getElementById("restoreBtn")
-      .addEventListener(
-        "click",
-        () => {
-
-          restoreInput.value = "";
-
-          restoreInput.click();
-
-        }
-      );
-
-
-    restoreInput.addEventListener(
-      "change",
-      async () => {
-
-        const file =
-          restoreInput.files &&
-          restoreInput.files[0];
-
-
-        if (!file) {
+        if (!valid) {
+          alert("That is not a valid Ritual backup file.");
           return;
         }
 
+        if (!confirm(
+          `Restore ${restoredQuotes.length} quotes? This will replace the quotes currently on this phone.`
+        )) {
+          return;
+        }
 
-        try {
+        quotes = restoredQuotes.map(q => ({
+          text: q.text,
+          author: q.author || ""
+        }));
 
-          const data =
-            JSON.parse(
-              await file.text()
-            );
+        localStorage.setItem("ritual_quotes", JSON.stringify(quotes));
 
+        index = 0;
+        editingIndex = null;
 
-          const restoredQuotes =
-            Array.isArray(data)
-              ? data
-              : data.quotes;
+        render();
 
+        alert("Ritual backup restored.");
+      } catch {
+        alert("Ritual could not read that backup file.");
+      }
+    });
 
-          const valid =
-            Array.isArray(restoredQuotes) &&
-            restoredQuotes.length > 0 &&
-            restoredQuotes.every(
-              q =>
-                q &&
-                typeof q.text === "string" &&
-                typeof (q.author ?? "") === "string"
-            );
+    document.getElementById("addBtn").addEventListener("click", () => {
+      editingIndex = null;
 
+      document.querySelector(".sheet h2").textContent = "Add a quote";
+      document.getElementById("saveBtn").textContent = "Save Quote";
 
-          if (!valid) {
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
 
-            alert(
-              "That is not a valid Ritual backup file."
-            );
+      quoteInput.value = "";
+      authorInput.value = "";
 
-            return;
+      setTimeout(() => quoteInput.focus(), 100);
+    });
 
-          }
+    track.addEventListener("click", e => {
+      const editBtn = e.target.closest(".editQuoteBtn");
+      const deleteBtn = e.target.closest(".deleteQuoteBtn");
 
+      if (editBtn) {
+        const i = Number(editBtn.dataset.index);
 
-          if (
-            !confirm(
-              `Restore ${restoredQuotes.length} quotes? This will replace the quotes currently on this phone.`
-            )
-          ) {
+        editingIndex = i;
 
-            return;
+        quoteInput.value = quotes[i].text;
+        authorInput.value = quotes[i].author || "";
 
-          }
+        document.querySelector(".sheet h2").textContent = "Edit quote";
+        document.getElementById("saveBtn").textContent = "Save Changes";
 
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
 
-          quotes =
-            restoredQuotes.map(
-              q => ({
-                text: q.text,
-                author: q.author || ""
-              })
-            );
+        setTimeout(() => quoteInput.focus(), 100);
 
+        return;
+      }
+
+      if (deleteBtn) {
+        const i = Number(deleteBtn.dataset.index);
+
+        if (!confirm("Delete this quote?")) return;
+
+        quotes.splice(i, 1);
+
+        localStorage.setItem(
+          "ritual_quotes",
+          JSON.stringify(quotes)
+        );
+
+        if (quotes.length === 0) {
+          quotes = starterQuotes.map(q => ({ ...q }));
 
           localStorage.setItem(
             "ritual_quotes",
             JSON.stringify(quotes)
           );
-
-
-          index = 0;
-
-          editingIndex = null;
-
-
-          render();
-
-
-          alert(
-            "Ritual backup restored."
-          );
-
-        } catch {
-
-          alert(
-            "Ritual could not read that backup file."
-          );
-
         }
 
+        index = Math.min(i, quotes.length - 1);
+
+        render();
       }
-    );
+    });
 
-
-    document
-      .getElementById("addBtn")
-      .addEventListener(
-        "click",
-        () => {
-
-          editingIndex = null;
-
-
-          document
-            .querySelector(".sheet h2")
-            .textContent =
-              "Add a quote";
-
-
-          document
-            .getElementById("saveBtn")
-            .textContent =
-              "Save Quote";
-
-
-          modal.classList.add(
-            "open"
-          );
-
-
-          modal.setAttribute(
-            "aria-hidden",
-            "false"
-          );
-
-
-          quoteInput.value = "";
-
-          authorInput.value = "";
-
-
-          setTimeout(
-            () => quoteInput.focus(),
-            100
-          );
-
-        }
-      );
-
-
-    track.addEventListener(
+    document.getElementById("cancelBtn").addEventListener(
       "click",
-      e => {
-
-        const editBtn =
-          e.target.closest(
-            ".editQuoteBtn"
-          );
-
-
-        const deleteBtn =
-          e.target.closest(
-            ".deleteQuoteBtn"
-          );
-
-
-        if (editBtn) {
-
-          const i =
-            Number(
-              editBtn.dataset.index
-            );
-
-
-          editingIndex = i;
-
-
-          quoteInput.value =
-            quotes[i].text;
-
-
-          authorInput.value =
-            quotes[i].author || "";
-
-
-          document
-            .querySelector(".sheet h2")
-            .textContent =
-              "Edit quote";
-
-
-          document
-            .getElementById("saveBtn")
-            .textContent =
-              "Save Changes";
-
-
-          modal.classList.add(
-            "open"
-          );
-
-
-          modal.setAttribute(
-            "aria-hidden",
-            "false"
-          );
-
-
-          setTimeout(
-            () => quoteInput.focus(),
-            100
-          );
-
-
-          return;
-
-        }
-
-
-        if (deleteBtn) {
-
-          const i =
-            Number(
-              deleteBtn.dataset.index
-            );
-
-
-          if (
-            !confirm(
-              "Delete this quote?"
-            )
-          ) {
-
-            return;
-
-          }
-
-
-          quotes.splice(
-            i,
-            1
-          );
-
-
-          localStorage.setItem(
-            "ritual_quotes",
-            JSON.stringify(quotes)
-          );
-
-
-          if (
-            quotes.length === 0
-          ) {
-
-            quotes =
-              starterQuotes.map(
-                q => ({
-                  ...q
-                })
-              );
-
-
-            localStorage.setItem(
-              "ritual_quotes",
-              JSON.stringify(quotes)
-            );
-
-          }
-
-
-          index =
-            Math.min(
-              i,
-              quotes.length - 1
-            );
-
-
-          render();
-
-        }
-
-      }
+      closeModal
     );
 
-
-    document
-      .getElementById("cancelBtn")
-      .addEventListener(
-        "click",
-        closeModal
-      );
-
-
-    modal.addEventListener(
-      "click",
-      e => {
-
-        if (
-          e.target === modal
-        ) {
-
-          closeModal();
-
-        }
-
-      }
-    );
-
+    modal.addEventListener("click", e => {
+      if (e.target === modal) closeModal();
+    });
 
     function closeModal() {
-
-      modal.classList.remove(
-        "open"
-      );
-
-
-      modal.setAttribute(
-        "aria-hidden",
-        "true"
-      );
-
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
 
       quoteInput.blur();
-
       authorInput.blur();
-
     }
 
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      const text = quoteInput.value.trim();
+      const author = authorInput.value.trim();
 
-    document
-      .getElementById("saveBtn")
-      .addEventListener(
-        "click",
-        () => {
+      if (!text) {
+        quoteInput.focus();
+        return;
+      }
 
-          const text =
-            quoteInput.value.trim();
+      if (editingIndex === null) {
+        quotes.push({
+          text,
+          author
+        });
 
+        index = quotes.length - 1;
+      } else {
+        quotes[editingIndex] = {
+          text,
+          author
+        };
 
-          const author =
-            authorInput.value.trim();
+        index = editingIndex;
+      }
 
-
-          if (!text) {
-
-            quoteInput.focus();
-
-            return;
-
-          }
-
-
-          if (
-            editingIndex === null
-          ) {
-
-            quotes.push({
-              text,
-              author
-            });
-
-
-            index =
-              quotes.length - 1;
-
-          } else {
-
-            quotes[editingIndex] = {
-              text,
-              author
-            };
-
-
-            index =
-              editingIndex;
-
-          }
-
-
-          localStorage.setItem(
-            "ritual_quotes",
-            JSON.stringify(quotes)
-          );
-
-
-          editingIndex = null;
-
-
-          render();
-
-
-          closeModal();
-
-        }
+      localStorage.setItem(
+        "ritual_quotes",
+        JSON.stringify(quotes)
       );
 
+      editingIndex = null;
 
-    window.addEventListener(
-      "resize",
-      () => go(index, false)
-    );
+      render();
+      closeModal();
+    });
 
+    window.addEventListener("resize", () => {
+      syncCardWidth();
+      go(index, false);
+    });
+
+    window.addEventListener("orientationchange", () => {
+      setTimeout(() => {
+        syncCardWidth();
+        go(index, false);
+      }, 150);
+    });
 
     render();
 
-
-    if (
-      "serviceWorker" in navigator
-    ) {
-
-      window.addEventListener(
-        "load",
-        () =>
-          navigator.serviceWorker
-            .register("sw.js")
-            .catch(() => {})
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () =>
+        navigator.serviceWorker
+          .register("sw.js")
+          .catch(() => {})
       );
-
     }
-
   </script>
-
 </body>
 </html>
