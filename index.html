@@ -546,22 +546,34 @@
         `${index + 1} / ${quotes.length}`;
     }
 
-    function go(newIndex, direction) {
-      newIndex = Math.max(
-        0,
-        Math.min(
-          newIndex,
-          quotes.length - 1
-        )
-      );
+    function getRandomIndex() {
+      if (quotes.length <= 1) {
+        return index;
+      }
 
+      let randomIndex = index;
+
+      while (randomIndex === index) {
+        randomIndex =
+          Math.floor(
+            Math.random() *
+            quotes.length
+          );
+      }
+
+      return randomIndex;
+    }
+
+    function goRandom(direction) {
       if (
-        newIndex === index ||
-        changing
+        changing ||
+        quotes.length <= 1
       ) {
-        render();
         return;
       }
+
+      const newIndex =
+        getRandomIndex();
 
       changing = true;
 
@@ -687,22 +699,10 @@
         const dx =
           endX - startX;
 
-        if (
-          dx < -55 &&
-          index < quotes.length - 1
-        ) {
-          go(
-            index + 1,
-            "left"
-          );
-        } else if (
-          dx > 55 &&
-          index > 0
-        ) {
-          go(
-            index - 1,
-            "right"
-          );
+        if (dx < -55) {
+          goRandom("left");
+        } else if (dx > 55) {
+          goRandom("right");
         }
       },
       {
