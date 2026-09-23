@@ -142,6 +142,51 @@
       transform: translateX(25px);
     }
 
+    #starQuoteBtn {
+      position: absolute;
+
+      top: 18px;
+      right: 20px;
+
+      width: 54px;
+      height: 54px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 0;
+      border-radius: 50%;
+
+      padding: 0;
+
+      background: transparent;
+
+      color: #ffffff;
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      font-size: 38px;
+      font-weight: 400;
+      line-height: 1;
+
+      cursor: pointer;
+
+      z-index: 15;
+    }
+
+    #starQuoteBtn.starred {
+      color: #ffffff;
+      background: transparent;
+    }
+
+    #starQuoteBtn:active {
+      transform: scale(.90);
+    }
+
     .quote {
       width: 100%;
       max-width: 820px;
@@ -438,13 +483,13 @@
 
       display: flex;
 
-      gap: 10px;
+      gap: 12px;
 
       z-index: 10;
     }
 
     .quoteTools button {
-      min-width: 72px;
+      min-width: 82px;
       min-height: 42px;
 
       border:
@@ -465,37 +510,20 @@
       background: #7d2020;
     }
 
-    #starQuoteBtn {
-      min-width: 52px;
-
-      padding: 0 13px;
-
-      font-size: 26px;
-      line-height: 1;
-
-      color: #d0d0d0;
-
-      background: #292929;
-    }
-
-    #starQuoteBtn.starred {
-      color: #ffd84a;
-
-      background: #3b3420;
-
-      border-color:
-        rgba(
-          255,
-          216,
-          74,
-          .38
-        );
-    }
-
     @media (max-height: 600px) {
 
       #card {
         padding-bottom: 90px;
+      }
+
+      #starQuoteBtn {
+        top: 10px;
+        right: 14px;
+
+        width: 48px;
+        height: 48px;
+
+        font-size: 34px;
       }
 
       #addBtn {
@@ -550,6 +578,15 @@
 
       <section id="card">
 
+        <button
+          id="starQuoteBtn"
+          type="button"
+          aria-label="Star quote"
+          title="Star quote"
+        >
+          ☆
+        </button>
+
         <div
           id="quoteDisplay"
           class="quote"
@@ -561,15 +598,6 @@
         ></div>
 
         <div class="quoteTools">
-
-          <button
-            id="starQuoteBtn"
-            type="button"
-            aria-label="Star quote"
-            title="Star quote"
-          >
-            ☆
-          </button>
 
           <button
             id="editQuoteBtn"
